@@ -1,0 +1,18 @@
+﻿using UnityEngine;
+
+public class Bullet : MonoBehaviour, IPoolable {
+    public Vector3 Velosity;
+    public float LifeTime;
+
+    public void Spawn() {
+        gameObject.SetActive(true);
+    }
+
+    public void Despawn() {
+        gameObject.SetActive(false);
+    }
+
+    public void DestroyObject() {
+        Destroy(gameObject);
+    }
+}
