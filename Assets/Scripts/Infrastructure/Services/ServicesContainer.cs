@@ -9,8 +9,8 @@ public class ServicesContainer {
         _systems = new Dictionary<Type, IService>();
     }
 
-    public void Set<TSystem>(TSystem implementedSystem) where TSystem : IService {
-        _systems.Add(typeof(TSystem), implementedSystem);
+    public void Set<TService>(TService implementedService) where TService : IService {
+        _systems.Add(typeof(TService), implementedService);
     }
 
     public TServices Get<TServices>() where TServices : class, IService {

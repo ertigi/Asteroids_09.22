@@ -19,9 +19,9 @@ public class PoolService : IService {
         Implementation<TObject>.Pool.AddObject(instance);
     }
 
-    public TObject Get<TObject>() where TObject : IPoolable =>
-        Implementation<TObject>.Pool.GetObject();
-
+    public TObject Get<TObject>() where TObject : IPoolable {
+        return Implementation<TObject>.Pool.GetObject();
+    }
 
     private static class Implementation<TObject> where TObject : IPoolable {
         public static ObjectPool<TObject> Pool;

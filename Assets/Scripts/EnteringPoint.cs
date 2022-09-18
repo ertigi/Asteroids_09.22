@@ -11,32 +11,59 @@ using UnityEngine;
 
 public class EnteringPoint : MonoBehaviour
 {
-    [SerializeField] private Bullet _bulletPrefab;
-    [SerializeField] private List<Asteroid> _asteroids = new List<Asteroid>();
+    [SerializeField] private AssetContainer _assetContainer;
+    [SerializeField] private Camera _camera;
 
-    private BulletController _bulletController;
     private ServicesContainer _servicesContainer;
+    private GameFactory _gameFactory;
 
     private void Awake() {
+        // bootstrap state
         ServicesInitialization();
+
+        //level load state
+        _servicesContainer.Get<AsteroidFactory>().CreateSteroids();
+        _servicesContainer.Get<BulletFactory>().CreateBullets();
+
+        _servicesContainer.Get<GameFactory>().CreateLevel();
     }
-
     private void Start() {
-        ShipMoveTest shipMoveTest = FindObjectOfType<ShipMoveTest>();
+        // gameloop
+        _gameFactory = _servicesContainer.Get<GameFactory>();
 
-        _bulletController = new BulletController(new BulletFactory(_bulletPrefab, _servicesContainer.Get<PoolService>()), shipMoveTest);
-
-        new AsteroidFactory(_asteroids, _servicesContainer.Get<PoolService>());
+        _gameFactory.AsteroidsController.StartGame();
     }
 
     private void Update() {
-        _bulletController.GameUpdate();
+        _gameFactory.BulletController.GameUpdate();
+        _gameFactory.AsteroidsController.GameUpdate();
     }
 
     private void ServicesInitialization() {
         _servicesContainer = new ServicesContainer();
 
+        _servicesContainer.Set(new AssetManager(_assetContainer));
+        _servicesContainer.Set(new AssetProvider(_servicesContainer.Get<AssetManager>()));
+
+
         _servicesContainer.Set(new PoolService());
+        _servicesContainer.Set(new ClampObjectInScreenService(_camera));
+
+
+        _servicesContainer.Set(new BulletFactory(_servicesContainer.Get<AssetProvider>(),
+            _servicesContainer.Get<PoolService>()));
+        _servicesContainer.Set(new AsteroidFactory(_servicesContainer.Get<AssetProvider>(),
+            _servicesContainer.Get<PoolService>(),
+            _servicesContainer));
+
+
+        _servicesContainer.Set(new GameFactory(_servicesContainer.Get<AssetProvider>(),
+            _servicesContainer.Get<BulletFactory>(),
+            _servicesContainer.Get<AsteroidFactory>(),
+            _servicesContainer.Get<ClampObjectInScreenService>()));
+
+
+        _servicesContainer.Set(new CollisionService(_servicesContainer.Get<GameFactory>()));
     }
 }
 

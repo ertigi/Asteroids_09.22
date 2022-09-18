@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Bullet : MonoBehaviour, IPoolable {
+public class Bullet : MonoBehaviour, IPoolable, ICollidableObject {
     public Vector3 Velosity;
     public float LifeTime;
 
@@ -14,5 +14,9 @@ public class Bullet : MonoBehaviour, IPoolable {
 
     public void DestroyObject() {
         Destroy(gameObject);
+    }
+
+    public int GetLayer() {
+        return gameObject.layer;
     }
 }

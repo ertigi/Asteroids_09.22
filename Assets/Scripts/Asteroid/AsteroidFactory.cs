@@ -1,39 +1,59 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
-public class AsteroidFactory {
+public class AsteroidFactory : IService {
     private PoolService _poolService;
+    private ServicesContainer _servicesContainer;
+    private AssetProvider _assetProvider;
 
-    public AsteroidFactory(List<Asteroid> asteroids, PoolService poolService) {
+    public AsteroidFactory(AssetProvider assetProvider, PoolService poolService, ServicesContainer servicesContainer) {
+        _assetProvider = assetProvider;
         _poolService = poolService;
-
-        FillPools(asteroids);
-
-        ReturnObjectInPool(TakeObjectFromPool<BigAsteroid>());
+        _servicesContainer = servicesContainer;
     }
 
-    public T TakeObjectFromPool<T>() where T : Asteroid =>
-        _poolService.Get<T>();
+    public void CreateSteroids() {
+        AddAsteroidsInPool<BigAsteroid>(10);
+        AddAsteroidsInPool<MediumAsteroid>(20);
+        AddAsteroidsInPool<SmallAsteroid>(40);
+    }
 
-    public void ReturnObjectInPool<T>(T asteroid) where T : Asteroid =>
-        _poolService.Add(asteroid);
-
-    private void FillPools(List<Asteroid> asteroids) {
-        foreach (var item in asteroids) {
-            if (item.GetAsteroidType() == AsteroidType.Small) {
-                CreateAsteroids(item as SmallAsteroid, 10);
-            } else if (item.GetAsteroidType() == AsteroidType.Medium) {
-                CreateAsteroids(item as MediumAsteroid, 10);
-            } else {
-                CreateAsteroids(item as BigAsteroid, 10);
-            }
+    public Asteroid GetAsteroid(AsteroidType type){
+        if (type == AsteroidType.Small) {
+            return InitAsteroid<SmallAsteroid>();
+        } else if (type == AsteroidType.Medium) {
+            return InitAsteroid<MediumAsteroid>();
+        } else {
+            return InitAsteroid<BigAsteroid>();
         }
     }
 
-    private void CreateAsteroids<T>(T asteroid, int count) where T : Asteroid{
+    public void ReturnObjectInPool(Asteroid asteroid) {
+        if (asteroid.GetAsteroidType() == AsteroidType.Small) {
+            _poolService.Add(asteroid as SmallAsteroid);
+        } else if (asteroid.GetAsteroidType() == AsteroidType.Medium) {
+            _poolService.Add(asteroid as MediumAsteroid);
+        } else {
+            _poolService.Add(asteroid as BigAsteroid);
+        }
+    }
+
+    private TAsteroid InitAsteroid<TAsteroid>() where TAsteroid : Asteroid {
+        Vector2 moveDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        float asteroidSpeed = Random.Range(40, 70);
+
+        TAsteroid newAsteroid = _poolService.Get<TAsteroid>();
+        newAsteroid.SetMovementParameters(moveDirection * asteroidSpeed);
+
+        return newAsteroid;
+    }
+
+
+    private void AddAsteroidsInPool<T>(int count) where T : Asteroid{
         for (int i = 0; i < count; i++) {
-            _poolService.Add(Object.Instantiate(asteroid));
+            T asteroid = _assetProvider.Instantiate<T>();
+            asteroid.Init(_servicesContainer.Get<CollisionService>());
+            _poolService.Add(asteroid);
         }
     }
 }

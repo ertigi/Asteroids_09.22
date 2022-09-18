@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ef9d72aa8b3a14b9d742f0286e5571, type: 3}
+  m_Name: Assets
+  m_EditorClassIdentifier: 
+  ShipMoveTest: {fileID: 4282513417704717621, guid: 0de4d8a5e118d774d8edbb7a1131f085,
+    type: 3}
+  Bullet: {fileID: 1271272927080715196, guid: 725f9b167e7c7074ea8cbbe0e4daedbc, type: 3}
+  SmallAsteroid: {fileID: 6767554969350126345, guid: 23017c93cad0ecd4b9b9aa9e368bea5b,
+    type: 3}
+  MediumAsteroid: {fileID: 2524094980850366203, guid: 3c1c605915a060a418b13419000f9908,
+    type: 3}
+  BigAsteroid: {fileID: 1417841318050012071, guid: c0d057baf70d575439aceabab6a37075,
+    type: 3}

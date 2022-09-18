@@ -1,7 +1,19 @@
+using System;
 using UnityEngine;
 
-public abstract class Asteroid : MonoBehaviour, IAsteroid {
+public abstract class Asteroid : MonoBehaviour, IPoolable, ICollidableObject {
     public abstract AsteroidType GetAsteroidType();
+    public Vector3 Velocity { get; private set; }
+
+    private CollisionService _collisionService;
+
+    public void Init(CollisionService collisionServices) {
+        _collisionService = collisionServices;
+    }
+
+    public void SetMovementParameters(Vector2 moveDirection) {
+        Velocity = moveDirection;
+    }
 
     public void Spawn() {
         gameObject.SetActive(true);
@@ -15,9 +27,13 @@ public abstract class Asteroid : MonoBehaviour, IAsteroid {
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.layer == 0) {
+    public int GetLayer() {
+        return gameObject.layer;
+    }
 
-        }
+    private void OnTriggerEnter2D(Collider2D collision) {
+        Debug.Log("fgshdflaskjdl;as");
+        if (collision.TryGetComponent(out ICollidableObject collidableObject))
+            _collisionService.Collision(this, collidableObject);
     }
 }
