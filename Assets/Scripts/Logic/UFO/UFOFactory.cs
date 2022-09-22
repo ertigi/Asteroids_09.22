@@ -24,7 +24,7 @@ public class UFOFactory : IService {
     public void ReturnObjectInPool(UFO uFO) =>
         _poolService.Add(uFO);
 
-    public void SpawnUFO() {
+    public void CreateUFO() {
         UFO newUFO = _assetProvider.Instantiate<UFO>();
         newUFO.Init(_servicesContainer.Get<CollisionService>(), 30f);
 

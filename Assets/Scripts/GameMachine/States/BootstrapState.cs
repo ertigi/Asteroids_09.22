@@ -3,47 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 1. init services
-/// 2. level load
-/// 3. game loop
-/// </summary>
-
-public class EnteringPoint : MonoBehaviour
-{
-    [SerializeField] private AssetContainer _assetContainer;
-    [SerializeField] private Camera _camera;
-
+public class BootstrapState : IState {
+    private GameStateMachine _gameStateMachine;
     private ServicesContainer _servicesContainer;
-    private GameFactory _gameFactory;
+    private AssetContainer _assetContainer;
+    private Camera _camera;
 
-    private void Awake() {
-        // bootstrap state
-        ServicesInitialization();
-
-        //level load state
-        _servicesContainer.Get<AsteroidFactory>().CreateSteroids();
-        _servicesContainer.Get<BulletFactory>().CreateBullets();
-        _servicesContainer.Get<UFOFactory>().SpawnUFO();
-
-        _servicesContainer.Get<GameFactory>().CreateLevel();
-    }
-    private void Start() {
-        // gameloop
-        _gameFactory = _servicesContainer.Get<GameFactory>();
-
-        _gameFactory.AsteroidsController.StartGame();
+    public BootstrapState(GameStateMachine gameStateMachine, ServicesContainer servicesContainer, AssetContainer assetContainer, Camera camera) {
+        _gameStateMachine = gameStateMachine;
+        _servicesContainer = servicesContainer;
+        _assetContainer = assetContainer;
+        _camera = camera;
     }
 
-    private void Update() {
-        _gameFactory.BulletController.GameUpdate();
-        _gameFactory.AsteroidsController.GameUpdate();
-        _gameFactory.UFOController.GameUpdate();
+    public void Enter() {
+        RegisterServices();
+        _gameStateMachine.Enter<LevelLoadState>();
+    }
+    public void Exit() {
+
     }
 
-    private void ServicesInitialization() {
-        _servicesContainer = new ServicesContainer();
-
+    private void RegisterServices() {
         _servicesContainer.Set(new AssetManager(_assetContainer));
         _servicesContainer.Set(new AssetProvider(_servicesContainer.Get<AssetManager>()));
 
@@ -74,5 +55,3 @@ public class EnteringPoint : MonoBehaviour
         _servicesContainer.Set(new CollisionService(_servicesContainer.Get<GameFactory>()));
     }
 }
-
-

@@ -28,6 +28,10 @@ public class GameFactory : IService {
     }
 
     public void CreateLevel() {
+        _asteroidFactory.CreateSteroids();
+        _bulletFactory.CreateBullets();
+        _uFOFactory.CreateUFO();
+
         CreatePlayer();
         CreateBulletController();
         CreateAsteroidController();
