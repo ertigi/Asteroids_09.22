@@ -21,3 +21,4 @@ MonoBehaviour:
     type: 3}
   BigAsteroid: {fileID: 1417841318050012071, guid: c0d057baf70d575439aceabab6a37075,
     type: 3}
+  UFO: {fileID: 7509967373771551443, guid: 287af26e92f4796479c0ff18a4459fea, type: 3}

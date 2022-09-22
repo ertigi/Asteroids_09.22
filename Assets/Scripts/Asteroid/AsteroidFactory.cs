@@ -4,12 +4,14 @@ using UnityEngine;
 public class AsteroidFactory : IService {
     private PoolService _poolService;
     private ServicesContainer _servicesContainer;
+    private Camera _camera;
     private AssetProvider _assetProvider;
 
-    public AsteroidFactory(AssetProvider assetProvider, PoolService poolService, ServicesContainer servicesContainer) {
+    public AsteroidFactory(AssetProvider assetProvider, PoolService poolService, ServicesContainer servicesContainer, Camera camera) {
         _assetProvider = assetProvider;
         _poolService = poolService;
         _servicesContainer = servicesContainer;
+        _camera = camera;
     }
 
     public void CreateSteroids() {
@@ -18,13 +20,15 @@ public class AsteroidFactory : IService {
         AddAsteroidsInPool<SmallAsteroid>(40);
     }
 
-    public Asteroid GetAsteroid(AsteroidType type){
-        if (type == AsteroidType.Small) {
-            return InitAsteroid<SmallAsteroid>();
-        } else if (type == AsteroidType.Medium) {
-            return InitAsteroid<MediumAsteroid>();
+    public Asteroid GetBigAsteroid() {
+        return InitBigAsteroid();
+    }
+
+    public Asteroid GetLowerAsteroid(Asteroid asteroid) {
+        if (asteroid.GetAsteroidType() == AsteroidType.Medium) {
+            return InitLowerAsteroid<SmallAsteroid>(asteroid);
         } else {
-            return InitAsteroid<BigAsteroid>();
+            return InitLowerAsteroid<MediumAsteroid>(asteroid);
         }
     }
 
@@ -38,16 +42,23 @@ public class AsteroidFactory : IService {
         }
     }
 
-    private TAsteroid InitAsteroid<TAsteroid>() where TAsteroid : Asteroid {
-        Vector2 moveDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-        float asteroidSpeed = Random.Range(40, 70);
+    private BigAsteroid InitBigAsteroid() {
+        BigAsteroid newAsteroid = _poolService.Get<BigAsteroid>();
+        newAsteroid.SetMovementParameters(CalculateRandomNormalizedDirection() * CalculateStartSpeed());
+        newAsteroid.transform.position = _camera.ViewportToWorldPoint(CalculateRandomPositionOnView());
+        return newAsteroid;
+    }
 
+    private TAsteroid InitLowerAsteroid<TAsteroid>(Asteroid parentAsteroid) where TAsteroid : Asteroid {
         TAsteroid newAsteroid = _poolService.Get<TAsteroid>();
+        newAsteroid.transform.position = parentAsteroid.transform.position;
+
+        Vector2 moveDirection = (CalculateRandomNormalizedDirection() + parentAsteroid.Velocity.normalized).normalized;
+        float asteroidSpeed = CalculateStartSpeed();
         newAsteroid.SetMovementParameters(moveDirection * asteroidSpeed);
 
         return newAsteroid;
     }
-
 
     private void AddAsteroidsInPool<T>(int count) where T : Asteroid{
         for (int i = 0; i < count; i++) {
@@ -56,4 +67,21 @@ public class AsteroidFactory : IService {
             _poolService.Add(asteroid);
         }
     }
+
+    private Vector2 CalculateRandomPositionOnView() =>
+        new Vector2(CalculateCoordinate(), CalculateCoordinate());
+
+    private float CalculateCoordinate() {
+        float c = 0;
+        do {
+            c = Random.Range(0f, 1f);
+        } while (c < .7f && c > .3f);
+        return c;
+    }
+
+    private Vector3 CalculateRandomNormalizedDirection() =>
+        new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+
+    private float CalculateStartSpeed() =>
+        Random.Range(40f, 70f);
 }

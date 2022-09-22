@@ -2,8 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class ShipMoveTest : MonoBehaviour
-{
+public class ShipMoveTest : MonoBehaviour, ICollidableObject {
     [SerializeField] private float _speed = 50f,
         _rotateSpeed = 5f,
         _brakeSpeed = .25f;
@@ -50,4 +49,6 @@ public class ShipMoveTest : MonoBehaviour
             0);
     }
 
+    public int GetLayer() =>
+        gameObject.layer;
 }

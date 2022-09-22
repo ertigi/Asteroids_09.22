@@ -13,6 +13,7 @@ public class AssetManager : IService {
             [assetContainer.MediumAsteroid.GetType()] = assetContainer.MediumAsteroid,
             [assetContainer.BigAsteroid.GetType()] = assetContainer.BigAsteroid,
             [assetContainer.Bullet.GetType()] = assetContainer.Bullet,
+            [assetContainer.UFO.GetType()] = assetContainer.UFO,
         };
     }
 

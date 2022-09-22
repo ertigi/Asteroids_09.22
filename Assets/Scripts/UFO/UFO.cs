@@ -1,18 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Asteroid : MonoBehaviour, IPoolable, ICollidableObject {
-    public abstract AsteroidType GetAsteroidType();
-    public Vector3 Velocity { get; private set; }
+public class UFO : MonoBehaviour, IPoolable, ICollidableObject{
+    public float Speed { get; private set; }
 
     private CollisionService _collisionService;
 
-    public void Init(CollisionService collisionServices) {
-        _collisionService = collisionServices;
-    }
-
-    public void SetMovementParameters(Vector2 velocity) {
-        Velocity = velocity;
+    public void Init(CollisionService collisionService, float speed) {
+        _collisionService = collisionService;
+        Speed = speed;
     }
 
     public void Spawn() => 

@@ -4,19 +4,15 @@ public class Bullet : MonoBehaviour, IPoolable, ICollidableObject {
     public Vector3 Velosity;
     public float LifeTime;
 
-    public void Spawn() {
+    public void Spawn() => 
         gameObject.SetActive(true);
-    }
 
-    public void Despawn() {
+    public void Despawn() => 
         gameObject.SetActive(false);
-    }
 
-    public void DestroyObject() {
+    public void DestroyObject() => 
         Destroy(gameObject);
-    }
 
-    public int GetLayer() {
-        return gameObject.layer;
-    }
+    public int GetLayer() =>
+        gameObject.layer;
 }

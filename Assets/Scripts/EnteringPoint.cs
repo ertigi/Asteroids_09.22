@@ -24,6 +24,7 @@ public class EnteringPoint : MonoBehaviour
         //level load state
         _servicesContainer.Get<AsteroidFactory>().CreateSteroids();
         _servicesContainer.Get<BulletFactory>().CreateBullets();
+        _servicesContainer.Get<UFOFactory>().SpawnUFO();
 
         _servicesContainer.Get<GameFactory>().CreateLevel();
     }
@@ -37,6 +38,7 @@ public class EnteringPoint : MonoBehaviour
     private void Update() {
         _gameFactory.BulletController.GameUpdate();
         _gameFactory.AsteroidsController.GameUpdate();
+        _gameFactory.UFOController.GameUpdate();
     }
 
     private void ServicesInitialization() {
@@ -54,13 +56,19 @@ public class EnteringPoint : MonoBehaviour
             _servicesContainer.Get<PoolService>()));
         _servicesContainer.Set(new AsteroidFactory(_servicesContainer.Get<AssetProvider>(),
             _servicesContainer.Get<PoolService>(),
-            _servicesContainer));
+            _servicesContainer,
+            _camera));
+        _servicesContainer.Set(new UFOFactory(_servicesContainer.Get<AssetProvider>(),
+            _servicesContainer.Get<PoolService>(),
+            _servicesContainer,
+            _camera));
 
 
         _servicesContainer.Set(new GameFactory(_servicesContainer.Get<AssetProvider>(),
             _servicesContainer.Get<BulletFactory>(),
             _servicesContainer.Get<AsteroidFactory>(),
-            _servicesContainer.Get<ClampObjectInScreenService>()));
+            _servicesContainer.Get<ClampObjectInScreenService>(),
+            _servicesContainer.Get<UFOFactory>()));
 
 
         _servicesContainer.Set(new CollisionService(_servicesContainer.Get<GameFactory>()));

@@ -11,4 +11,6 @@ public class AssetContainer : ScriptableObject {
     public SmallAsteroid SmallAsteroid;
     public MediumAsteroid MediumAsteroid;
     public BigAsteroid BigAsteroid;
+    [Header("UFO")]
+    public UFO UFO;
 }
